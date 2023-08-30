@@ -2,4 +2,6 @@
 forge-std/=lib/forge-std/src/
 @uniswap/v3-core/=lib/v3-core/
 @uniswap/v3-periphery/=lib/v3-periphery/
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
+@uniswap/v3-staker/=lib/v3-staker/
+@openzeppelin/contracts/=lib/@openzeppelin/contracts/
+@uniswap/lib/=lib/solidity-lib/
