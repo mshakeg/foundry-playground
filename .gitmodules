@@ -24,3 +24,6 @@
 [submodule "lib/solidity-lib"]
 	path = lib/solidity-lib
 	url = https://github.com/uniswap/solidity-lib
+[submodule "lib/v3-staker"]
+	path = lib/v3-staker
+	url = https://github.com/uniswap/v3-staker

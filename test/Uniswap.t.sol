@@ -7,12 +7,13 @@ import { console2 } from "forge-std/console2.sol";
 
 import { IUniswapV3Factory } from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import { IUniswapV3Pool } from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-
 import { FixedPoint96 } from "@uniswap/v3-core/contracts/libraries/FixedPoint96.sol";
 
 import { INonfungibleTokenPositionDescriptor } from "@uniswap/v3-periphery/contracts/interfaces/INonfungibleTokenPositionDescriptor.sol";
 import { INonfungiblePositionManager } from "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 import { ISwapRouter } from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+
+import { IUniswapV3Staker } from "@uniswap/v3-staker/contracts/interfaces/IUniswapV3Staker.sol";
 
 import { MockERC20 } from "./mock/MockERC20.sol";
 
@@ -27,6 +28,7 @@ contract UniswapTest is StdCheats {
     INonfungibleTokenPositionDescriptor internal nonfungibleTokenPositionDescriptor;
     INonfungiblePositionManager internal nonfungiblePositionManager;
     ISwapRouter internal swapRouter;
+    IUniswapV3Staker internal v3Staker;
 
     MockERC20 tokenA;
     MockERC20 tokenB;
@@ -61,6 +63,13 @@ contract UniswapTest is StdCheats {
 
         nonfungiblePositionManager = INonfungiblePositionManager(deployCode("NonfungiblePositionManager.sol", abi.encode(address(uniswapV3Factory), wethAddress, address(nonfungibleTokenPositionDescriptor))));
         swapRouter = ISwapRouter(deployCode("SwapRouter.sol", abi.encode(address(uniswapV3Factory), wethAddress)));
+
+        uint256 _maxIncentiveStartLeadTime = 86_400; // incentive start time must be at most within a day of creation
+        uint256 _maxIncentiveDuration = 86_400 * 30; // incentive duration from start to end can be at most 30 days
+
+        v3Staker = IUniswapV3Staker(deployCode("UniswapV3Staker.sol", abi.encode(address(uniswapV3Factory), address(nonfungiblePositionManager), _maxIncentiveStartLeadTime, _maxIncentiveDuration)));
+
+        require(v3Staker.factory() == uniswapV3Factory, "factory ne");
     }
 
     function test_Uniswap() external {
